@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DARK EAST — Walking Tours of London's East End</title>
+<meta name="description" content="Two walking tours through the dark history of London's East End: The Great Plague of 1665 and the Whitechapel Murders of 1888.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070a10;
+  --bg2:#0b0f17;
+  --surface:#0e1420;
+  --line:#1f2733;
+  --ink:#e9e2d3;
+  --muted:#a99f8c;
+  --gold:#d8a24a;
+  --gold-hi:#f0c57e;
+  --ember:#c95b3b;
+  --cyan:#41d9f8;
+  --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:'Instrument Sans',sans-serif;
+  line-height:1.6;overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.mono{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan)}
+.gold{color:var(--gold)}
+/* fog canvas */
+#fog{position:fixed;inset:0;z-index:-2;opacity:.9}
+.grad{position:fixed;inset:0;z-index:-3;
+  background:radial-gradient(120% 100% at 50% -10%,#16213a 0%,#070a10 55%,#05070c 100%);
+}
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem 3rem;backdrop-filter:blur(6px);background:rgba(7,10,16,.78);border-bottom:1px solid rgba(31,39,51,.5)}
+.brand{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:.04em;font-size:1.2rem}
+.brand .dot{color:var(--gold)}
+.navlinks{display:flex;gap:2rem;font-size:.85rem;color:var(--muted)}
+.navlinks a:hover{color:var(--ink)}
+.cta{padding:.5rem 1.1rem;border:1px solid var(--gold);color:var(--gold);font-family:var(--mono);
+  font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;transition:.2s}
+.cta:hover{background:var(--gold);color:#1a1305}
+/* hero */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:7rem 2rem 4rem;position:relative}
+.kicker{color:var(--cyan);margin-bottom:1.8rem}
+.wordmark{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(4rem,14vw,11rem);
+  line-height:.9;letter-spacing:.01em}
+.wordmark em{color:var(--gold);font-style:italic}
+.tagline{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.2rem,3vw,1.9rem);
+  color:var(--muted);margin-top:1.6rem;max-width:44rem}
+.desc{max-width:40rem;color:var(--muted);margin-top:1.2rem;font-size:1rem}
+.hero-cta{display:flex;gap:1rem;margin-top:2.8rem;flex-wrap:wrap;justify-content:center}
+.btn{padding:.85rem 1.8rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;transition:.2s}
+.btn-primary{background:var(--gold);color:#1a1305}
+.btn-primary:hover{background:var(--gold-hi)}
+.btn-ghost{border:1px solid var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.scroll-hint{position:absolute;bottom:2.4rem;color:var(--muted);font-size:.7rem;font-family:var(--mono);
+  letter-spacing:.2em;text-transform:uppercase}
+.scroll-hint .bar{width:1px;height:3rem;background:linear-gradient(var(--gold),transparent);margin:.6rem auto 0}
+/* section base */
+section{padding:6rem 3rem;position:relative}
+.wrap{max-width:1140px;margin:0 auto}
+.sec-head{margin-bottom:3rem}
+.sec-head h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.05}
+.sec-head p{color:var(--muted);max-width:40rem;margin-top:.8rem}
+.rule{width:3.5rem;height:2px;background:var(--gold);margin:1.4rem 0}
+/* about story */
+.story-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:3.5rem;align-items:center}
+.story-grid .img-col{position:relative}
+.story-grid img{border:1px solid var(--line);width:100%;height:auto;filter:sepia(.25) contrast(1.02)}
+.img-slot::after{content:"";position:absolute;inset:0;border:1px solid var(--gold);transform:translate(14px,14px);z-index:-1;pointer-events:none}
+.story-body p{color:var(--muted);margin-bottom:1.1rem}
+.story-body strong{color:var(--ink)}
+.pullquote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.7rem;color:var(--gold);margin:1.8rem 0;line-height:1.3}
+.titles{list-style:none;margin-top:.5rem}
+.titles li{padding:.7rem 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:1rem;align-items:baseline}
+.titles .name{font-family:'Cormorant Garamond',serif;font-size:1.15rem}
+.titles .yr{font-family:var(--mono);color:var(--cyan);font-size:.72rem}
+/* tours */
+#tours{background:linear-gradient(180deg,var(--bg) 0%,#0a0e17 40%,var(--bg) 100%)}
+.tour{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:4rem;border:1px solid var(--line);background:var(--surface);overflow:hidden}
+.tour:last-child{margin-bottom:0}
+.tour .media{position:relative;min-height:420px;overflow:hidden}
+.tour .media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 6s ease}
+.tour:hover .media img{transform:scale(1.05)}
+.tour .media .tag{position:absolute;top:1.2rem;left:1.2rem;background:rgba(7,10,16,.85);border:1px solid var(--line);
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;padding:.4rem .7rem;color:var(--gold)}
+.tour .media .yr-overlay{position:absolute;bottom:-1rem;right:1.4rem;font-family:'Cormorant Garamond',serif;
+  font-size:7rem;font-weight:600;color:rgba(216,162,74,.14);line-height:1;pointer-events:none}
+.tour .content{padding:2.8rem}
+.tour .content .mono-line{color:var(--cyan);margin-bottom:1rem}
+.tour .content h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:2.4rem;margin-bottom:.6rem}
+.tour .content .mood{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--gold);font-size:1.2rem;margin-bottom:1.2rem}
+.tour .content p{color:var(--muted);font-size:.98rem}
+.tour .content h4{font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;color:var(--muted);margin:1.6rem 0 .8rem;text-transform:uppercase}
+.highlights{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1.2rem}
+.highlights li{color:var(--ink);font-size:.92rem;padding-left:1.2rem;position:relative}
+.highlights li::before{content:"✦";position:absolute;left:0;color:var(--gold);font-size:.7rem;top:.25rem}
+.tour-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem 1.6rem;margin-top:1.6rem;padding-top:1.4rem;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+.tour-meta .m{display:flex;flex-direction:column;gap:.15rem}
+.tour-meta .lab{font-family:var(--mono);font-size:.58rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;}
+.tour-meta b{color:var(--ink);font-weight:600;font-size:.82rem}
+.tour-link{display:inline-block;margin-top:1.8rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--gold);padding-bottom:.25rem;transition:.2s}
+.tour-link:hover{color:var(--gold-hi);border-color:var(--gold-hi)}
+.flip .media{order:2}
+.flip .content{order:1}
+/* the four corners / found sounds */
+.corners{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;margin-top:2rem}
+.corner{border:1px solid var(--line);padding:1.6rem;background:var(--surface);position:relative}
+.corner .n{font-family:var(--mono);color:var(--gold);font-size:.7rem;letter-spacing:.18em;margin-bottom:1.2rem}
+.corner h4{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.3rem;margin-bottom:.5rem}
+.corner p{color:var(--muted);font-size:.88rem}
+/* night field strip */
+.gallery{margin-top:4rem}
+.gallery .imgs{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.gallery img{width:100%;height:240px;object-fit:cover;border:1px solid var(--line);filter:saturate(.85) contrast(1.02);transition:.3s}
+.gallery img:hover{filter:none;transform:translateY(-3px)}
+.gallery .cap{font-family:var(--mono);font-size:.62rem;color:var(--muted);margin-top:.5rem;letter-spacing:.05em}
+/* how it works */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;margin-top:2.5rem}
+.step{border-left:2px solid var(--gold);padding-left:1.4rem}
+.step .n{font-family:var(--mono);color:var(--gold);font-size:.7rem;letter-spacing:.2em}
+.step h4{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.5rem;margin:.5rem 0}
+.step p{color:var(--muted);font-size:.9rem}
+/* booking CTA */
+#book{background:linear-gradient(180deg,var(--bg),#0c111c);text-align:center;padding:7rem 2rem}
+#book h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(2.4rem,6vw,4rem);line-height:1.1;max-width:22ch;margin:0 auto}
+#book .sub{color:var(--muted);max-width:36rem;margin:1.2rem auto 2.5rem}
+.enquiry{max-width:560px;margin:0 auto;text-align:left}
+.enquiry .field{margin-bottom:1.2rem}
+.enquiry label{display:block;font-family:var(--mono);font-size:.64rem;letter-spacing:.2em;color:var(--muted);margin-bottom:.45rem;text-transform:uppercase}
+.enquiry input,.enquiry select{padding:.85rem 1rem;background:var(--surface);border:1px solid var(--line);color:var(--ink);
+  width:100%;font-family:'Instrument Sans',sans-serif;font-size:.95rem}
+.enquiry input:focus,.enquiry select:focus{outline:none;border-color:var(--gold)}
+.enquiry .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.enquiry button{width:100%;margin-top:.6rem;padding:1rem;background:var(--gold);border:none;color:#1a1305;
+  font-family:var(--mono);font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:.2s}
+.enquiry button:hover{background:var(--gold-hi)}
+.demo-note{margin-top:1.2rem;font-family:var(--mono);font-size:.65rem;color:var(--muted);text-align:center;letter-spacing:.05em}
+/* footer */
+footer{padding:3rem;border-top:1px solid var(--line);background:#05070c}
+footer .wrap{display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;align-items:center}
+footer .brand{font-size:1.4rem}
+.credits{font-size:.68rem;color:var(--muted);line-height:1.7;max-width:48rem}
+.credits a{color:var(--muted);text-decoration:underline}
+@media(max-width:860px){
+  nav{padding:1rem 1.4rem}
+  .navlinks{display:none}
+  .hero{padding-top:6rem}
+  .story-grid,.tour{grid-template-columns:1fr}
+  .tour .media{min-height:300px}
+  .flip .media{order:1}.flip .content{order:2}
+  section{padding:4rem 1.4rem}
+  .corners,.steps{grid-template-columns:1fr 1fr}
+  .gallery .imgs{grid-template-columns:1fr}
+  .highlights{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){.corners,.steps{grid-template-columns:1fr}.highlights{grid-template-columns:1fr}.enquiry .row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="grad"></div>
+<canvas id="fog"></canvas>
+
+<nav>
+  <div class="brand">DARK EAST<span class="dot">.</span></div>
+  <div class="navlinks">
+    <a href="#about">The East</a>
+    <a href="#tours">The Tours</a>
+    <a href="#experience">Experience</a>
+    <a href="#book">Book</a>
+  </div>
+  <a class="cta" href="#book">Book a Walk</a>
+</nav>
+
+<section class="hero">
+  <div class="kicker mono">Walking Tours &nbsp;·&nbsp; London · E1&nbsp;Whitechapel&nbsp;·&nbsp;Spitalfields</div>
+  <h1 class="wordmark">Dark <em>East</em>.</h1>
+  <p class="tagline">The other history of London's East End — plague pits and gaslit murder,
+  told where they happened, as dusk falls on the old streets.</p>
+  <p class="desc">Two signature walks through the city's darkest quarter: the Great Plague of 1665
+  and the Whitechapel Murders of 1888.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#tours">Explore the Tours</a>
+    <a class="btn btn-ghost" href="#book">Propose a Booking</a>
+  </div>
+  <div class="scroll-hint">scroll<div class="bar"></div></div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="mono">The Thesis</div>
+      <div class="rule"></div>
+      <h2>Everyone knows the East End.<br>Nobody tells this side of it.</h2>
+      <p>DARK EAST is a guided-tour concept built on the true, darker memory of Whitechapel,
+      Aldgate and Spitalfields — the corner of London where a city's forgotten dead, its poorest
+      and its most infamous all left their mark on the same few cramped streets.</p>
+    </div>
+    <div class="story-grid">
+      <div class="img-col img-slot">
+        <img src="img/plague_engraving.webp" alt="17th century engraving of the Great Plague, London 1665" loading="lazy">
+      </div>
+      <div class="story-body">
+        <p class="pullquote">"There were dead carts going through, and people crying, and the doors and windows shut…"</p>
+        <p>In the summer of <strong>1665</strong>, plague swept eastward from St Giles through the teeming
+        lanes of Whitechapel and Stepney on its way to the City. As many as a <strong>hundred thousand</strong>
+        Londoners died — perhaps a quarter of the whole city — and the East End buried them in open pits.</p>
+        <p>Two centuries later, in the <strong>autumn of 1888</strong>, the same quarter became the
+        stage for the Whitechapel murders — five women killed on the poorest streets in the capital,
+        their killer never found. The case forced Victorian Britain to look at the poverty beneath its
+        imperial wealth, and it has never lost its hold.</p>
+        <p><strong>DARK EAST does not sensationalise.</strong> Both walks are historically grounded,
+        led on the actual streets, and told with care for the people — the living and the dead —
+        whose stories made this place.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tours">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="mono">The Two Walks</div>
+      <div class="rule"></div>
+      <h2>Two evenings. Two centuries.<br>One neighbourhood's long shadow.</h2>
+      <p>Each walk is a self-contained 2-hour guided evening tour of around two miles,
+      starting at a landmark and ending on the historic streets where the story belongs.</p>
+    </div>
+
+    <!-- Tour 1: Plague -->
+    <div class="tour">
+      <div class="media">
+        <img src="img/plague_painting.webp" alt="The Great Plague of 1665, engraving of the enthusiast denouncing London" loading="lazy">
+        <span class="tag">Tour I</span>
+        <div class="yr-overlay">1665</div>
+      </div>
+      <div class="content">
+        <div class="mono-line">The Plague Walk</div>
+        <h3>The Summer of the Great Mortality</h3>
+        <div class="mood">Blood and quicklime in the alleys of Whitechapel</div>
+        <p>Walk the ground where the Great Plague took hold. From the plague pits beneath
+        what is now a Whitechapel supermarket to the famous bills of mortality, hear how an
+        East End parish lost five times its normal dead in a single season — and what the
+        dead-cart men, the shut doors and the silence truly sounded like.</p>
+        <h4>On the walk</h4>
+        <ul class="highlights">
+          <li>Whitechapel &amp; Aldgate burial pits</li>
+          <li>The 1665 bills of mortality</li>
+          <li>Plague Orders &amp; the walled City</li>
+          <li>Stepney parish &amp; the outparishes</li>
+          <li>Contemporary plague engravings</li>
+          <li>The quicklime &amp; the dead carts</li>
+        </ul>
+        <div class="tour-meta">
+          <div class="m"><span class="lab">Duration</span><b>2 hours</b></div>
+          <div class="m"><span class="lab">Distance</span><b>~2 miles</b></div>
+          <div class="m"><span class="lab">Meet</span><b>Tower Hill · Trinity Sq</b></div>
+          <div class="m"><span class="lab">Evenings</span><b>Seasonal, summer</b></div>
+        </div>
+        <a class="tour-link" href="#book">Enquire about this walk →</a>
+      </div>
+    </div>
+
+    <!-- Tour 2: Ripper -->
+    <div class="tour flip">
+      <div class="media">
+        <img src="img/ripper_commercial.webp" alt="Commercial Street, Whitechapel, East London" loading="lazy">
+        <span class="tag">Tour II</span>
+        <div class="yr-overlay">1888</div>
+      </div>
+      <div class="content">
+        <div class="mono-line">The Ripper Walk</div>
+        <h3>Five Women of Whitechapel</h3>
+        <div class="mood">The unsolved mystery — and the poverty it exposed</div>
+        <p>Follow the trail of the 1888 Whitechapel murders through the streets of Spitalfields
+        and Whitechapel: where the victims were last seen, where their bodies were found, and the
+        manhunt that never closed the case. A walk about five real women, told with restraint —
+        and the appalling conditions that made the murders possible.</p>
+        <h4>On the walk</h4>
+        <ul class="highlights">
+          <li>Mitre Square &amp; the double event</li>
+          <li>The Ten Bells &amp; Spitalfields</li>
+          <li>The canonical five, their lives</li>
+          <li>Dorset Street &amp; Goulston Street</li>
+          <li>The theories &amp; the evidence</li>
+          <li>Christ Church Spitalfields</li>
+        </ul>
+        <div class="tour-meta">
+          <div class="m"><span class="lab">Duration</span><b>2 hours</b></div>
+          <div class="m"><span class="lab">Distance</span><b>~2 miles</b></div>
+          <div class="m"><span class="lab">Meet</span><b>Whitechapel High St</b></div>
+          <div class="m"><span class="lab">Evenings</span><b>Seasonal, summer</b></div>
+        </div>
+        <a class="tour-link" href="#book">Enquire about this walk →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="mono">Why dark, why now</div>
+      <div class="rule"></div>
+      <h2>The whole dark map of the East End.</h2>
+      <p>Beyond the two headline walks, a rich field of stories runs under these streets.
+      The concept is built to grow — from haunted Thames docks to Tower Hill's scaffold,
+      to the occult and the underworld of the old East End.</p>
+    </div>
+    <div class="corners">
+      <div class="corner"><div class="n">01</div><h4>The Plague Pits</h4><p>Mass graves still beneath modern Whitechapel — a city literally built over its dead.</p></div>
+      <div class="corner"><div class="n">02</div><h4>The Murder Mile</h4><p>The notorious corners of Spitalfields where the Ripper case unfolded over one autumn.</p></div>
+      <div class="corner"><div class="n">03</div><h4>Tower Hill &amp; Newgate</h4><p>Executions, riots and the scaffold — the state's darkness at the East End's edge.</p></div>
+      <div class="corner"><div class="n">04</div><h4>The Docks &amp; Thames</h4><p>Smuggling, the opium trade and the drowned — the river's own ghost stories.</p></div>
+    </div>
+
+    <div class="gallery">
+      <div class="gallery imgs">
+        <figure><img src="img/ripper_mitre.webp" alt="Mitre Square, Whitechapel" loading="lazy"><figcaption class="cap">Mitre Square — the 1888 "double event"</figcaption></figure>
+        <figure><img src="img/plague_painting.webp" alt="The Great Plague engraving" loading="lazy"><figcaption class="cap">The Great Plague, 1665</figcaption></figure>
+        <figure><img src="img/eastend_tenbells.webp" alt="The Ten Bells, Commercial Street" loading="lazy"><figcaption class="cap">The Ten Bells, Spitalfields</figcaption></figure>
+      </div>
+      <div class="gallery imgs" style="margin-top:1rem">
+        <figure><img src="img/ripper_tenbells.webp" loading="lazy" alt="The Ten Bells pub"><figcaption class="cap">Haunt of the Ripper victims</figcaption></figure>
+        <figure><img src="img/plague_map.webp" loading="lazy" alt="Chart of the Great Plague distribution"><figcaption class="cap">Chart of the plague's spread, 1665</figcaption></figure>
+        <figure><img src="img/plague_chart.webp" loading="lazy" alt="Bill of mortality chart"><figcaption class="cap">The bills of mortality</figcaption></figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="book">
+  <div class="wrap">
+    <div class="mono">Proposal &amp; Booking</div>
+    <div class="rule" style="margin:1.4rem auto"></div>
+    <h2>Bring an evening of dark East End<br>history to life.</h2>
+    <p class="sub">This is a concept site showing what a DARK EAST tour offer could look like.
+    Get in touch to commission the first walks, or to book a group evening.</p>
+    <form class="enquiry" onsubmit="return false">
+      <div class="field"><label for="t">Which walk</label>
+        <select id="t"><option>Plague Walk — 1665</option><option>Ripper Walk — 1888</option><option>Both / discuss</option></select>
+      </div>
+      <div class="row">
+        <div class="field"><label>Your name</label><input type="text" placeholder="Name"></div>
+        <div class="field"><label>Email</label><input type="email" placeholder="you@email.com"></div>
+      </div>
+      <div class="field"><label>Group size &amp; preferred evening</label><input type="text" placeholder="e.g. 12 people, a summer evening"></div>
+      <button onclick="alert('This is a proposal site — no data is stored. Contact Giovanni directly to commission or book.')">Send Enquiry</button>
+    </form>
+    <div class="demo-note">DEMO PROPOSAL · No data is stored · Presented for Giovanni</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand">DARK EAST<span class="dot">.</span></div>
+    <p class="credits">
+      A proposal concept presented for Giovanni. Imagery is sourced from Wikimedia Commons and
+      shown here for design demonstration only: <a href="https://wellcomecollection.org/works/">Wellcome Collection</a>
+      (plague engravings, charts &amp; The Enthusiast Denouncing London, CC-BY-4.0), and
+      <a href="https://commons.wikimedia.org/">Wikimedia Commons contributors</a>
+      (Mitre Square · Ten Bells · Commercial St, various free licences). Licences in alt text.
+    </p>
+  </div>
+</footer>
+
+<script>
+// Fog / ember drift — plain canvas, respects reduced motion
+const c=document.getElementById('fog'),x=c.getContext('2d');
+let reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W=c.width=c.offsetWidth,H=c.height=c.offsetHeight;
+const parts=[];
+function size(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight}
+function init(){
+  parts.length=0;
+  const n=reduce?0:55;
+  for(let i=0;i<n;i++)parts.push({
+    x:Math.random(),y:Math.random(),r:Math.random()*2+0.4,
+    vx:(Math.random()-0.5)*0.0005,vy:(Math.random()-0.5)*0.0003,
+    a:Math.random()*0.5+0.15,g:(Math.random()<0.35)
+  });
+}
+function draw(){
+  requestAnimationFrame(draw);
+  if(reduce){x.clearRect(0,0,W,H);return}
+  x.clearRect(0,0,W,H);
+  for(const p of parts){
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=1;if(p.x>1)p.x=0;if(p.y<0)p.y=1;if(p.y>1)p.y=0;
+    const col=p.g?'216,162,74':'65,217,248';
+    x.beginPath();x.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+    x.fillStyle=`rgba(${col},${p.a})`;x.fill();
+  }
+}
+window.addEventListener('resize',()=>{size()});
+init();size();draw();
+</script>
+</body>
+</html>
